@@ -39,6 +39,10 @@ name = "spritesheet"
 path = "tools/spritesheet.rs"
 
 [[example]]
+name = "test"
+path = "examples/test.rs"
+
+[[example]]
 name = "01_empty"
 path = "examples/01_empty.rs"
 
