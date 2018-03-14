@@ -226,7 +226,7 @@ impl Font {
 
 /// A wrapper around rusttype's font cache.
 pub struct FontCache {
-    cache   : Mutex<rusttype::gpu_cache::Cache>,
+    cache   : Mutex<rusttype::gpu_cache::Cache<'static>>,
     queue   : Mutex<Vec<(Rect<u32>, Vec<u8>)>>,
     dirty   : AtomicBool,
 }
@@ -243,14 +243,14 @@ impl FontCache {
     }
 
     /// Queues a glyph for caching.
-    pub fn queue(self: &Self, font_id: usize, glyphs: &[rusttype::PositionedGlyph]) {
+    pub fn queue<'font>(self: &Self, font_id: usize, glyphs: &[rusttype::PositionedGlyph<'font>]) {
 
         let mut cache = self.cache.lock().unwrap();
         let mut queue = self.queue.lock().unwrap();
         let mut dirties = false;
 
         for glyph in glyphs {
-            cache.queue_glyph(font_id, glyph.clone());
+            cache.queue_glyph(font_id, glyph.standalone());
         }
 
         cache.cache_queued(|rect, data| {
